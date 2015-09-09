@@ -3,29 +3,29 @@
 
 #include <string>
 #include <map>
-#include "Object.h"
 
-namespace core {
-	class ObjectFactory {
-	public:
-		static ObjectFactory& Get();
+class ObjectFactory {
+public:
+	static ObjectFactory& Get();
 
-		Object* GetDefault(std::string name);
-		Object* CreateNew(std::string name);
+	class Object* GetDefault(std::string name);
+	class Object* CreateNew(std::string name);
 
-		void AddDefault(std::string name, Object* obj);
+	class Object* GetDefault(unsigned long typeId);
+	class Object* CreateNew(unsigned long typeId);
 
-		~ObjectFactory();
+	void Add(std::string name, class Object* obj);
 
-		ObjectFactory(const ObjectFactory& rhs) = delete;
-		ObjectFactory& operator = (const ObjectFactory & rhs) = delete;
+	~ObjectFactory();
 
-	private:
-		ObjectFactory();
+	ObjectFactory(const ObjectFactory& rhs) = delete;
+	ObjectFactory& operator = (const ObjectFactory & rhs) = delete;
 
-		static ObjectFactory* __instance;
-		std::map<std::string, Object*> Graph;
-	};
-}
+private:
+	ObjectFactory();
+
+	static ObjectFactory* __instance;
+	std::map<std::string, class Object*> Graph;
+};
 
 #endif

@@ -1,12 +1,14 @@
 #include "Meta.h"
+#include "MetaGraph.h"
 
 using namespace core;
 using namespace reflection;
 
-Meta::Meta(std::string name, long typeId) : 
+Meta::Meta(std::string name, unsigned long typeId) : 
 	name(name),
 	typeId(typeId)
 {
+	MetaGraph::Get().Add(this);
 }
 
 Meta::~Meta() {

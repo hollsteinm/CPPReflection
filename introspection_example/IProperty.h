@@ -8,7 +8,7 @@ namespace core {
 	namespace reflection {
 
 		struct IProperty : public Meta {
-			IProperty(std::string name, long typeId);
+			IProperty(std::string name, unsigned long typeId);
 
 			virtual void* Get(void* obj) const = 0;
 			virtual void Set(void* obj, void* value) = 0;

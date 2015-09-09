@@ -4,7 +4,7 @@
 using namespace core;
 using namespace reflection;
 
-IProperty::IProperty(std::string name, long typeId) :
+IProperty::IProperty(std::string name, unsigned long typeId) :
 	Meta(name, typeId)
 {}
 

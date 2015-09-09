@@ -1,6 +1,7 @@
 #include "ObjectFactory.h"
-
-using namespace core;
+#include "IType.h"
+#include "MetaGraph.h"
+#include "Object.h"
 
 ObjectFactory* ObjectFactory::__instance;
 
@@ -30,9 +31,32 @@ Object* ObjectFactory::CreateNew(std::string name) {
 	}
 }
 
-void ObjectFactory::AddDefault(std::string name, Object* obj) {
-	if (Graph.find(name) == Graph.end()) {
-		Graph[name] = obj;
+Object* ObjectFactory::GetDefault(unsigned long typeId) {
+	auto c = core::reflection::MetaGraph::Get().Get(typeId);
+	if (c) {
+		return GetDefault(c->GetName());
+	}
+	else {
+		return nullptr;
+	}
+}
+
+Object* ObjectFactory::CreateNew(unsigned long typeId) {
+	auto c = core::reflection::MetaGraph::Get().Get(typeId);
+	if (c) {
+		return CreateNew(c->GetName());
+	}
+	else {
+		return nullptr;
+	}
+}
+
+void ObjectFactory::Add(std::string name, Object* obj) {
+	if (obj)
+	{
+		if (Graph.find(name) == Graph.end()) {
+			Graph[name] = obj;
+		}
 	}
 }
 
@@ -40,5 +64,4 @@ ObjectFactory::~ObjectFactory() {
 }
 
 ObjectFactory::ObjectFactory() {
-	AddDefault("Object", &Object::StaticInstance());
 }

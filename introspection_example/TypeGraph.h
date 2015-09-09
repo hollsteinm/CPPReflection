@@ -14,12 +14,9 @@ namespace core {
 			TypeGraph(const TypeGraph& rhs) = delete;
 			TypeGraph& operator = (const TypeGraph & rhs) = delete;
 
-			void AddType(long typeId, IType* type);
+			void Add(IType* type);
 
-			const std::string GetTypeName(long typeId);
-			const long GetTypeId(std::string name);
-			const IType* GetType(std::string name);
-			const IType* GetType(long typeId);
+			const IType* Get(unsigned long typeId) const;
 
 			~TypeGraph();
 
@@ -28,7 +25,6 @@ namespace core {
 
 			static TypeGraph* __instance;
 			std::map<long, IType*> idTypeMap;
-			std::map<std::string, long> nameIdMap;
 		};
 	}
 }

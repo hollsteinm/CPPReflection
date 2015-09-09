@@ -9,12 +9,6 @@ static long Instances = 0;
 class Object;
 TYPE(Object)
 
-namespace reflect {
-	namespace generated {
-		core::reflection::Class& Object__Class();		
-	}
-}
-
 class Object {
 private:
 	static Object Object__static;
@@ -22,6 +16,7 @@ private:
 
 public:
 	static Object& StaticInstance();
+	static core::reflection::Class& StaticClass();
 
 	//////////////////////////////////////////
 	//Must be overriden by inherited classes//

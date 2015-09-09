@@ -2,20 +2,18 @@
 #include "IProperty.h"
 #include "Serialization.h"
 #include "Property.h"
-
-namespace reflect {
-	namespace generated {
-		core::reflection::Class& Object__Class() {
-			static core::reflection::Class Object__Class("Object", Object__Type.GetTypeId());
-			return Object__Class;
-		}
-	}
-}
+#include "ObjectFactory.h"
 
 Object Object::Object__static;
 
 Object& Object::StaticInstance() {
+	Object::StaticClass();
 	return Object__static;
+}
+
+core::reflection::Class& Object::StaticClass() {
+	static core::reflection::Class Object__class("Object", TYPEOF(Object));
+	return Object__class;
 }
 
 //////////////////////////////////////////
@@ -26,27 +24,27 @@ Object* Object::CreateSelf() const {
 }
 
 core::reflection::IProperty* Object::GetProperty(std::string name) const {
-	return reflect::generated::Object__Class().GetProperty(name);
+	return Object::StaticClass().GetProperty(name);
 }
 
 std::vector<core::reflection::IProperty*> Object::GetProperties() const {
-	return reflect::generated::Object__Class().GetProperties();
+	return Object::StaticClass().GetProperties();
 }
 
 const std::string Object::GetName() const {
-	return reflect::generated::Object__Class().GetName();
+	return Object::StaticClass().GetName();
 }
 
 const long Object::GetTypeId() const {
-	return reflect::generated::Object__Type.GetTypeId();
+	return TYPEOF(Object);
 }
 
 bool Object::Write(std::ostream& out) {
-	return reflect::generated::Object__Class().Write(this, out, VERSION);
+	return Object::StaticClass().Write(this, out, VERSION);
 }
 
 bool Object::Read(std::istream& in) {
-	return reflect::generated::Object__Class().Read(this, in, VERSION);
+	return Object::StaticClass().Read(this, in, VERSION);
 }
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -54,7 +52,8 @@ bool Object::Read(std::istream& in) {
 
 Object::Object() {
 	instanceId = ++Instances;
-	reflect::generated::Object__Class().AddProperty("instanceId", new core::reflection::Property<Object, long>("instanceId", core::GetTypeId("long"), &Object::instanceId));
+	ObjectFactory::Get().Add("Object", &Object__static);
+	Object::StaticClass().Add(new core::reflection::Property<Object, long>("instanceId", &Object::instanceId));
 }
 
 bool Object::InstanceOf(Object* other) {
@@ -62,7 +61,7 @@ bool Object::InstanceOf(Object* other) {
 }
 
 const core::reflection::IType* Object::GetType() {
-	return core::reflection::TypeGraph::Get().GetType(GetTypeId());
+	return core::reflection::TypeGraph::Get().Get(GetTypeId());
 }
 
 std::ostream& operator<<(std::ostream& out, Object& self) {

@@ -11,10 +11,10 @@ namespace core {
 		struct IProperty;
 
 		struct Class : public Meta {
-			Class(std::string name, long typeId);
+			Class(std::string name, unsigned long typeId);
 			~Class();
 
-			void AddProperty(std::string name, IProperty* prop);
+			void Add(IProperty* prop);
 			
 			std::vector<IProperty*> GetProperties() const;
 			IProperty* GetProperty(std::string name) const;

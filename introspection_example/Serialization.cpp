@@ -1,5 +1,6 @@
 #include "Serialization.h"
 #include "ObjectFactory.h"
+#include "Object.h"
 
 Object* Deserialize(std::istream& in) {
 	char str[256];
@@ -11,7 +12,7 @@ Object* Deserialize(std::istream& in) {
 		in.unget();
 	}
 
-	Object* o = core::ObjectFactory::Get().CreateNew(className);
+	Object* o = ObjectFactory::Get().CreateNew(className);
 	if (o != nullptr) {
 		if (o->Read(in)){
 			return o;

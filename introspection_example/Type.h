@@ -2,22 +2,26 @@
 #define TYPE_H
 
 #include "IType.h"
+#include <functional>
 
 namespace core {
 	namespace reflection {
-		static long typeidInstance = 0;
+
+		static long MakeTypeHash(std::string constantName) {
+			return std::hash<std::string>()(constantName);
+		}
 
 		template<typename T>
 		struct Type : public IType {
-			Type(const std::string name) :
-				name(name)
+			Type(std::string constantName) :
+				name(constantName),
+				typeId(MakeTypeHash(constantName))
 			{
-				typeId = typeidInstance++;
-				TypeGraph::Get().AddType(typeId, this);
+				TypeGraph::Get().Add(this);
 			}
 
 			long GetTypeId() const override { return typeId; }
-			virtual const std::string GetTypeName() const override { return name; }
+			std::string GetTypeName() const override { return name; }
 
 			bool IsTypeOf(IType* other) const override {
 				return other->GetTypeId() == typeId;
@@ -26,8 +30,8 @@ namespace core {
 			typedef typename T TYPE;
 
 		private:
-			long typeId;
-			const std::string name;
+			unsigned long typeId;
+			std::string name;
 		};
 	}
 }

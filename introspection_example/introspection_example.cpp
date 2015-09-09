@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Reflection.h"
 #include <sstream>
+#include <fstream>
 
 /**Examples below (inline class definitions)*/
 CLASS(ChildObject)
@@ -22,7 +23,6 @@ protected:
 	int aNumber;
 };
 
-DEFREFLECTION(ChildObject)
 DEFSTATICCLASS(ChildObject)
 
 RCLASS(GrandChildObject, ChildObject)
@@ -38,13 +38,19 @@ private:
 	Object inner;
 };
 
-DEFREFLECTION(GrandChildObject)
 DEFSTATICCLASS(GrandChildObject)
 
 void MagicHandleDemo();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	std::fstream f("../save.bin", std::fstream::in | std::fstream::out | std::fstream::binary | std::ofstream::trunc);
+	if (f.is_open())
+	{
+		f.close();
+		f.open("../save.bin", std::fstream::in | std::fstream::out | std::fstream::binary | std::ofstream::trunc);
+	}
+
 	std::cout << Object::StaticInstance().GetName() << std::endl;
 
 	std::vector<core::reflection::IProperty*> properties = Object::StaticInstance().GetProperties();
@@ -61,23 +67,23 @@ int _tmain(int argc, _TCHAR* argv[])
 	count = properties.size();
 	for (int i = 0; i < count; ++i)
 	{
-		std::cout << properties[i]->GetName() << " is a(n) " << core::GetTypeName(properties[i]->GetTypeId()) << std::endl;
+		std::cout << properties[i]->GetName() << " is a(n) " << core::GetName(properties[i]->GetTypeId()) << std::endl;
 	}
 
 	std::cout << std::endl;
 	std::cout << GrandChildObject::StaticInstance().GetName() << std::endl;
 
-	properties = core::ObjectFactory::Get().GetDefault("GrandChildObject")->GetProperties();
+	properties = ObjectFactory::Get().GetDefault("GrandChildObject")->GetProperties();
 	count = properties.size();
 	for (int i = 0; i < count; ++i)
 	{
-		std::cout << properties[i]->GetName() << " is a(n) " << core::GetTypeName(properties[i]->GetTypeId()) << std::endl;
+		std::cout << properties[i]->GetName() << " is a(n) " << core::GetName(properties[i]->GetTypeId()) << std::endl;
 	}
 
 	std::cout << std::endl;
 	std::cout << "Brand New GrandChildObject - Stringified" << std::endl;
 	std::stringstream output;
-	GrandChildObject* newPtr = (GrandChildObject*)core::ObjectFactory::Get().CreateNew("GrandChildObject");
+	GrandChildObject* newPtr = (GrandChildObject*)ObjectFactory::Get().CreateNew("GrandChildObject");
 	newPtr->Write(output);
 	std::cout << output.str() << std::endl;
 	std::cout << "Now print it using << operators" << std::endl;
@@ -102,7 +108,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		count = properties.size();
 		for (int i = 0; i < count; ++i)
 		{
-			std::cout << properties[i]->GetName() << " is a(n) " << core::GetTypeName(properties[i]->GetTypeId()) << std::endl;
+			std::cout << properties[i]->GetName() << " is a(n) " << core::GetName(properties[i]->GetTypeId()) << std::endl;
 		}
 
 		auto prop = tocreate->GetProperty("aNumber");
@@ -121,6 +127,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << "Operators" << std::endl;
 	std::cout << *tocreate << std::endl;
 
+	std::cout << "Writing to file 'save.bin'" << std::endl;
+	if (f.is_open()) {
+		f << *tocreate;
+		f.flush();
+		f.close();
+	}
+	else {
+		std::cout << "Not Opened" << std::endl;
+	}
+
 	delete toserialize;
 	delete tocreate;
 	stream.flush();
@@ -129,7 +145,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 struct IHandler {
-	virtual bool Handles(long typeId) = 0;
+	virtual bool Handles(unsigned long typeId) = 0;
 	virtual void Handle(void* obj) = 0;
 };
 
@@ -145,7 +161,7 @@ protected:
 
 class ObjectHandler : public AHandler < Object > {
 public:
-	virtual bool Handles(long typeId) override {
+	virtual bool Handles(unsigned long typeId) override {
 		return typeId == TYPEOF(Object);
 	}
 
@@ -157,7 +173,7 @@ protected:
 
 class ChildObjectHandler : public AHandler < ChildObject > {
 public:
-	virtual bool Handles(long typeId) override {
+	virtual bool Handles(unsigned long typeId) override {
 		return typeId == TYPEOF(ChildObject);
 	}
 
@@ -169,7 +185,7 @@ protected:
 
 class GrandChildObjectHandler : public AHandler < GrandChildObject > {
 public:
-	virtual bool Handles(long typeId) override {
+	virtual bool Handles(unsigned long typeId) override {
 		return typeId == TYPEOF(GrandChildObject);
 	}
 
@@ -192,14 +208,16 @@ void MagicHandleDemo() {
 	co.Write(ss);
 
 	Object* handled = Deserialize(ss);
-	for (unsigned int i = 0; i < handlers.size(); ++i){
-		if (handlers[i]->Handles(core::GetTypeId(handled->GetName()))){
-			handlers[i]->Handle(handled);
+	if (handled) {
+		for (unsigned int i = 0; i < handlers.size(); ++i){
+			if (handlers[i]->Handles(handled->GetTypeId())){
+				handlers[i]->Handle(handled);
+			}
 		}
-	}
 
-	delete handled;
+		delete handled;
+	}
 	for (unsigned int i = 0; i < handlers.size(); ++i){
 		delete handlers[i];
-	}	
+	}
 }

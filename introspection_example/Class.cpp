@@ -1,21 +1,27 @@
 #include "Class.h"
 #include "Meta.h"
 #include "IProperty.h"
+#include "MetaGraph.h"
 
 using namespace core;
 using namespace reflection;
 
-Class::Class(std::string name, long typeId) :
+Class::Class(std::string name, unsigned long typeId) :
 	Meta(name, typeId),
 	Properties()
 {
+	MetaGraph::Get().Add(this);
 }
 
 Class::~Class() {}
 
-void Class::AddProperty(std::string name, IProperty* prop) {
-	if (Properties.size() <= 0 || Properties.find(name) == Properties.cend())
-		Properties[name] = prop;
+void Class::Add(IProperty* prop) {
+	if (prop)
+	{
+		const std::string name = prop->GetName();
+		if (Properties.size() <= 0 || Properties.find(name) == Properties.cend())
+			Properties[name] = prop;
+	}
 }
 
 std::vector<IProperty*> Class::GetProperties() const {

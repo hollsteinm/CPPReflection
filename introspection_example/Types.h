@@ -5,10 +5,19 @@
 #include "IType.h"
 #include "Type.h"
 
-#define TYPE(X) namespace reflect { namespace generated { static const core::reflection::Type<X> X##__Type(#X); } }
-#define TYPEOF(X) reflect::generated::X##__Type.GetTypeId()
-#define TYPENAME(X) reflect::generated::X##__Type.GetTypeName()
-#define GETTYPE(X) reflect::generated::X##__Type
+namespace core{
+	namespace reflection{
+		template<typename T>
+		inline const IType& GetType() {
+			static const Type<T> TT("null");
+			return TT;
+		}
+	}
+}
+
+#define TYPE(X) namespace core { namespace reflection { template<> inline const IType& GetType<X>() { static const Type<X> TT(#X); return TT; } } }
+#define TYPEOF(X) core::reflection::GetType<X>().GetTypeId()
+#define TYPENAME(X) core::reflection::GetType<X>().GetTypeName()
 
 
 TYPE(void)
@@ -19,11 +28,10 @@ TYPE(bool)
 TYPE(float)
 TYPE(double)
 
-namespace core {
-	__forceinline static std::string GetTypeName(long typeId) { return core::reflection::TypeGraph::Get().GetTypeName(typeId); }
-	__forceinline static long GetTypeId(std::string name) { return core::reflection::TypeGraph::Get().GetTypeId(name); }
-	__forceinline static const core::reflection::IType* GetType(std::string name) { return core::reflection::TypeGraph::Get().GetType(name); }
-	__forceinline static const core::reflection::IType* GetType(long typeId) { return core::reflection::TypeGraph::Get().GetType(typeId); }
+namespace core
+{
+	__forceinline static const core::reflection::IType* GetType(unsigned long typeId) { return core::reflection::TypeGraph::Get().Get(typeId); }
+	__forceinline static const std::string GetName(unsigned long typeId) { return core::reflection::TypeGraph::Get().Get(typeId)->GetTypeName(); }
 }
 
 #endif

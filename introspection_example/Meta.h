@@ -7,7 +7,7 @@
 namespace core {
 	namespace reflection {
 		struct Meta : public core::serial::ISerializable {
-			Meta(std::string name, long typeId);
+			Meta(std::string name, unsigned long typeId);
 
 			virtual ~Meta();
 
@@ -18,11 +18,11 @@ namespace core {
 			const long GetTypeId() const;
 
 			virtual bool Read(void* obj, std::istream& in, int version) override;
-			virtual bool Write(void* obj, std::ostream& out, int version) const;
+			virtual bool Write(void* obj, std::ostream& out, int version) const override;
 
 		private:
 			std::string name;
-			long typeId;
+			unsigned long typeId;
 		};
 	}
 }

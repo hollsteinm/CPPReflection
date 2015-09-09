@@ -2,13 +2,14 @@
 #define PROPERTY_H
 
 #include "IProperty.h"
+#include "Types.h"
 
 namespace core {
 	namespace reflection {
 		template<typename C, typename P>
 		struct Property : public IProperty {
-			Property(std::string name, long typeId, P C::*property) :
-				IProperty(name, typeId),
+			Property(std::string name, P C::*property) :
+				IProperty(name, TYPEOF(P)),
 				property(property)
 			{}
 

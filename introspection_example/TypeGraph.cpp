@@ -17,44 +17,21 @@ TypeGraph& TypeGraph::Get() {
 	return *__instance;
 }
 
-void TypeGraph::AddType(long typeId, IType* type) {
-	if (idTypeMap.find(typeId) == idTypeMap.cend())
+void TypeGraph::Add(IType* type) {
+	if (idTypeMap.find(type->GetTypeId()) == idTypeMap.cend())
 	{
-		idTypeMap[typeId] = type;
-		nameIdMap[type->GetTypeName()] = typeId;
+		idTypeMap[type->GetTypeId()] = type;
 	}
 }
 
-const std::string TypeGraph::GetTypeName(long typeId) {
-	if (idTypeMap.find(typeId) != idTypeMap.end())
-		return idTypeMap[typeId]->GetTypeName();
-	else
-		return idTypeMap[0]->GetTypeName();
-}
 
-const long TypeGraph::GetTypeId(std::string name) {
-	if (nameIdMap.find(name) != nameIdMap.end()){
-		return nameIdMap[name];
+const IType* TypeGraph::Get(unsigned long typeId) const {
+	if (idTypeMap.find(typeId) != idTypeMap.end()) {
+		return idTypeMap.at(typeId);
 	}
 	else {
-		return 0;
+		return nullptr;
 	}
-}
-
-const IType* TypeGraph::GetType(std::string name) {
-	if (nameIdMap.find(name) != nameIdMap.end()){
-		return idTypeMap[nameIdMap[name]];
-	}
-	else {
-		return idTypeMap[0];
-	}
-}
-
-const IType* TypeGraph::GetType(long typeId) {
-	if (idTypeMap.find(typeId) != idTypeMap.end())
-		return idTypeMap[typeId];
-	else
-		return idTypeMap[0];
 }
 
 TypeGraph::~TypeGraph() {

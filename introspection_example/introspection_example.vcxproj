@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class.h" />
+    <ClInclude Include="MetaGraph.h" />
     <ClInclude Include="IProperty.h" />
     <ClInclude Include="ISerializable.h" />
     <ClInclude Include="IType.h" />
@@ -97,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Class.cpp" />
+    <ClCompile Include="MetaGraph.cpp" />
     <ClCompile Include="introspection_example.cpp" />
     <ClCompile Include="IProperty.cpp" />
     <ClCompile Include="Meta.cpp" />
