@@ -87,6 +87,7 @@
     <ClInclude Include="Meta.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="Pointer.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="Reflection.h" />
     <ClInclude Include="Serialization.h" />

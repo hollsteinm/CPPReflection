@@ -9,6 +9,9 @@
 #include "Object.h"
 #include "Serialization.h"
 #include "MetaGraph.h"
+#include "Pointer.h"
+
+#define DECL_PTR_TYPE(T) TYPE(ObjectPtr<T>)
 
 #define VERSION 0
 #define PROPERTY(C, PropertyTYPE, NAME) C::StaticClass().Add(new core::reflection::Property<C, PropertyTYPE> (#NAME, &C::NAME));
@@ -19,7 +22,6 @@
 
 #define CLASSBODY(C) private: \
 	static C C##__static; \
-	long instanceId;\
 public:\
 	static core::reflection::Class& StaticClass() { static core::reflection::Class C##__class(#C, TYPEOF(C)); return C##__class; } \
 	static C& StaticInstance() { C::StaticClass(); return C##__static; }\
